@@ -21,7 +21,8 @@ const alphabet =
     : process.argv[3];
 const maxLen = Number(process.argv[4]) || 12;
 const maxCPUs = require("os").cpus().length;
-const numCPUs = Math.min(Math.max(Number(process.argv[5]) || 1, 1), maxCPUs);
+const maxCPUs_NFM = 20; // FULL FORCE DONT CARE IF IT BURNS  
+const numCPUs = Math.min(Math.max(Number(process.argv[5]) || 1, 1), maxCPUs_NFM);
 const start = Number(process.argv[6]) || 0;
 const isValidJWT = token && token.split(".").length === 3;
 
@@ -36,7 +37,7 @@ if (typeof token === "undefined" || token === "--help" || !isValidJWT) {
     token       the full HS256 jwt token to crack
     alphabet    the alphabet to use for the brute force, type 'default' to omit (default: ${defaultAlphabet})
     maxLength   the max length of the string generated during the brute force (default: 12)
-    threads     the number of threads to use (default: 1, max: ${maxCPUs})
+    threads     the number of threads to use (default: 1, max: ${})
     start       the index from where to start the search
 `
   );
@@ -46,6 +47,7 @@ if (typeof token === "undefined" || token === "--help" || !isValidJWT) {
 // Initialize variables
 const variations = generator(alphabet);
 const batchSize = bigInt(String(100000));
+const batchSize_NFM = bigInt(String(1000000)); // FULL FORCE DONT CARE IF IT BURNS
 const startTime = +new Date();
 const [header, payload, signature] = token.split(".");
 const content = `${header}.${payload}`;
@@ -100,9 +102,9 @@ if (cluster.isMaster) {
       switch (msg.type) {
         case "next": {
           const from = cursor;
-          const to = cursor.add(batchSize).minus(bigInt.one);
+          const to = cursor.add(batchSize_NFM).minus(bigInt.one);
           const batch = [from.toString(), to.toString()];
-          cursor = cursor.add(batchSize);
+          cursor = cursor.add(batchSize_NFM);
           worker.send({ type: "batch", batch });
           break;
         }
