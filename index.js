@@ -37,7 +37,7 @@ if (typeof token === "undefined" || token === "--help" || !isValidJWT) {
     token       the full HS256 jwt token to crack
     alphabet    the alphabet to use for the brute force, type 'default' to omit (default: ${defaultAlphabet})
     maxLength   the max length of the string generated during the brute force (default: 12)
-    threads     the number of threads to use (default: 1, max: ${})
+    threads     the number of threads to use (default: 1, max: ${maxCPUs_NFM})
     start       the index from where to start the search
 `
   );
